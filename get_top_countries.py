@@ -20,7 +20,7 @@ import matplotlib.pylab as pylab
 
 
 # Create an engine instance
-alchemyEngine = create_engine('postgresql+psycopg2://oleg:test@95.84.242.45/odoo14', pool_recycle=3600);
+alchemyEngine = create_engine('postgresql+psycopg2://oleg:test!@37.204.242.84/odoo14', pool_recycle=3600);
  
 # Connect to PostgreSQL server
 dbConnection = alchemyEngine.connect();
@@ -28,7 +28,7 @@ dbConnection = alchemyEngine.connect();
 # Read data from PostgreSQL database table and load into a DataFrame instance
 df = pd.read_sql("                                                  \
 select partner_name,                                                \
-       round(100 * cnt / sum(cnt) over (), 1) percent                 \
+       round(100 * cnt / sum(cnt) over (), 1) percent               \
 from  (                                                             \
     select partner_name,                                            \
            case when partner_name = 'Other' then 1                  \
@@ -56,6 +56,20 @@ dbConnection);
 
 # Close the database connection
 dbConnection.close();
+
+TITLE = 'Top IT Outsourcing Countries'
+if 1==1:
+    TITLE = 'Топ стран по аутсорсингу ИТ'
+    df['partner_name'] = df['partner_name'].replace(['United States'], 'США')
+    df['partner_name'] = df['partner_name'].replace(['India'], 'Индия')
+    df['partner_name'] = df['partner_name'].replace(['United Kingdom'], 'Великобритания')
+    df['partner_name'] = df['partner_name'].replace(['Canada'], 'Канада')
+    df['partner_name'] = df['partner_name'].replace(['Australia'], 'Австралия')
+    df['partner_name'] = df['partner_name'].replace(['Germany'], 'Германия')
+    df['partner_name'] = df['partner_name'].replace(['Israel'], 'Израиль')
+    df['partner_name'] = df['partner_name'].replace(['Singapore'], 'Сингапур')
+    df['partner_name'] = df['partner_name'].replace(['Other'], 'Остальные')
+
 
 # set style pylab.rcParams.keys()
 params = {'legend.fontsize': 'xx-large',
@@ -87,7 +101,7 @@ ax.annotate(str(df.percent[8]) + '%', xy=(0,             8), xytext=(7,  -5), te
 # add space for lables
 plt.subplots_adjust(left=0.2)
 
-plt.title('Top IT Outsourcing Countries')
+plt.title(TITLE)
 
 # Despine
 ax.spines['right'].set_visible(False)
